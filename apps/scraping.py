@@ -8,6 +8,7 @@ from bs4 import BeautifulSoup
 # import pandas
 import pandas as pd
 import datetime as dt
+import os
 
 # Set the executable path and initialize the chrome browser in splinter
 # executable_path = {'executable_path': '/usr/local/bin/chromedriver'}
