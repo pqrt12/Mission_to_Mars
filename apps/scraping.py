@@ -58,7 +58,7 @@ def scrape_all():
         "featured_image": featured_image(browser),
         "facts": mars_facts(),
         "hemispheres": mars_hemispheres(browser),
-        "last_modified": dt.datetime.now()
+        "last_modified": dt.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
     }
 
     return data
@@ -145,10 +145,15 @@ def mars_facts():
 
     # Assign columns and set index of dataframe
     df.columns = ['description', 'value']
-    df.set_index('description', inplace=True)
+    # remove last punctuation (easy to expand)
+    punctuations = [':', '.', '?']
+    df['description'] = list(
+        map(lambda s: s[:-1] if s[-1] in punctuations else s, df['description']))
     # Convert dataframe into HTML format, add bootstrap
-    return df.to_html()
+    html = df.to_html(index=False, justify='center', classes=[
+                      'table table-striped table-bordered table-hover table-condensed'])
 
+    return html
 
 # -----------------------------------------------------------------------------
 #  Mars Hemispheres

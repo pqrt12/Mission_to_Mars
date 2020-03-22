@@ -1,6 +1,7 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, redirect
 from flask_pymongo import PyMongo
 import scraping
+import time
 
 app = Flask(__name__)
 
@@ -20,8 +21,9 @@ def scrape():
    mars = mongo.db.mars
    mars_data = scraping.scrape_all()
    mars.update({}, mars_data, upsert=True)
-   return "Scraping Successful!"
-
+   print("Scraping Successful!")
+   time.sleep(1)
+   return redirect("/")
 
 @app.route("/hemispheres/<index>")
 def show_hemisphere(index):
