@@ -23,5 +23,15 @@ def scrape():
    return "Scraping Successful!"
 
 
+@app.route("/hemispheres/<index>")
+def show_hemisphere(index):
+   idx = int(index)
+   mars = mongo.db.mars.find_one()
+   if (idx >= len(mars["hemispheres"])) or (idx < 0):
+      idx = 0
+   hemi = mars["hemispheres"][idx]
+   return render_template("hemisphere.html", hemisphere=hemi)
+
+
 if __name__ == "__main__":
    app.run()
