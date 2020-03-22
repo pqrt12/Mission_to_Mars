@@ -57,6 +57,7 @@ def scrape_all():
         "news_paragraph": news_paragraph,
         "featured_image": featured_image(browser),
         "facts": mars_facts(),
+        "hemispheres": mars_hemispheres(browser),
         "last_modified": dt.datetime.now()
     }
 
@@ -148,6 +149,74 @@ def mars_facts():
     # Convert dataframe into HTML format, add bootstrap
     return df.to_html()
 
+
+# -----------------------------------------------------------------------------
+#  Mars Hemispheres
+
+# get the full size image url: class="container" / class="wide-image"
+def get_hemi_img_url(img_soup):
+    img_url = ""
+    for container in img_soup.find_all(class_='container'):
+        t = container.find(class_='wide-image')
+        if t:
+            img_url = t.get('src')
+            break
+    return img_url
+
+# get the title: class="content" / class="title"
+def get_hemi_title(img_soup):
+    title = ""
+    for content in img_soup.find_all(class_='content'):
+        if not title:
+            t = content.find(class_='title')
+            if t:
+                title = t.get_text()
+            break
+    return title
+
+
+def mars_hemispheres(browser):
+    # Visit the usgs mars site
+    usgs_base_url = 'https://astrogeology.usgs.gov'
+    usgs_url = f'{usgs_base_url}/search/results?q=hemisphere+enhanced&k1=target&v1=Mars'
+    browser.visit(usgs_url)
+    # Optional delay for loading the page
+    browser.is_element_present_by_id("product-section", wait_time=10)
+    #time.sleep(0.1)
+
+    # get the href for splinter find.
+    prod_soup = BeautifulSoup(
+        browser.html, 'html.parser').find(id='product-section')
+    thumbs_hrefs = []
+    for a in prod_soup.find_all('a', href=True):
+        if a['href'] in thumbs_hrefs:
+            continue
+        thumbs_hrefs.append(a['href'])
+
+    # get the img_urls, titles.
+    img_urls = []
+    for href in thumbs_hrefs:
+        # Optional delay for loading the page
+        browser.visit(usgs_url)
+        browser.is_element_present_by_id("product-section", wait_time=10)
+        #time.sleep(0.1)
+        browser.links.find_by_href(href)[1].click()
+
+        # up to 10 sec.
+        browser.is_element_present_by_id("wide-image", wait_time=10)
+        img_soup = BeautifulSoup(browser.html, 'html.parser')
+        # get title
+        title = get_hemi_title(img_soup)
+        # get url
+        img_url = get_hemi_img_url(img_soup)
+        # save it
+        if (title and img_url):
+            img_urls.append(
+                {'img_url': usgs_base_url + img_url, 'title': title})
+
+    n = len(img_urls)
+    print(f"get {n} Mars hemispeheres images.")
+    return img_urls
 
 if __name__ == "__main__":
     # If running as script, print scraped data
