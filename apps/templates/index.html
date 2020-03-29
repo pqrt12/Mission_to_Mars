@@ -10,18 +10,22 @@
 </head>
 
 <body>
-    <div class="container">
+    <div class="wrapper">
         <!-- Add Jumbotron to Header -->
         <div class="jumbotron text-center">
             <h1>Mission to Mars</h1>
-            <p>Scrapped on {{mars.last_modified}}</p>
+            <form>
+                <p>Scrapped on {{mars.last_modified}}</p>
+            </form>
             <!-- Add a button to activate scraping script -->
             <p><a class="btn btn-primary btn-lg" href="/scrape" role="button">Scrape New Data</a></p>
         </div>
+    </div>
 
-        <!-- Add section for Mars News -->
-        <div class="row" id="mars-news">
-            <div class="col-md-12">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-8" id="mars-news-image">
+                <!-- Add section for Mars News -->
                 <div class="media">
                     <div class="media-body">
                         <h2>Latest Mars News</h2>
@@ -29,25 +33,62 @@
                         <p>{{ mars.news_paragraph }}</p>
                     </div>
                 </div>
+                <!-- Add section for Featured Image -->
+                <div class="media">
+                    <div class="media-body">
+                        <h2>Featured Mars Image</h2>
+                        <!-- if images is False/None/non-existent, then default to error message -->
+                        <img src="{{mars.featured_image | default('static/images/error.png', true) }}"
+                            class="img-responsive" alt="Responsive image" />
+                    </div>
+                </div>
             </div>
-        </div>
 
-        <!-- Section for Featured Image and Facts table -->
-        <div class="row" id="mars-featured-image">
-            <div class="col-md-8">
-                <h2>Featured Mars Image</h2>
-
-                <!-- if images is False/None/non-existent, then default to error message -->
-                <img src="{{mars.featured_image | default('static/images/error.png', true) }}" class="img-responsive"
-                    alt="Responsive image" />
-            </div>
 
             <div class="col-md-4">
+                <!-- Section for Featured Image and Facts table -->
                 <!-- Mars Facts -->
-                <div class="row" id="mars-facts">
-                    <div class="col-md-12">
-                        <h4>Mars Facts</h4>
+                <div class="media" id="mars-facts">
+                    <h3>Mars Facts</h3>
+                    <div class="media-body">
                         {{ mars.facts | safe }}
+                    </div>
+                </div>
+
+                <!-- Section for Hemisphere Images -->
+                <br>
+                <h3>Hemisphere Images</h3>
+                <div class="row" id="mars-hemi-images-1">
+                    <div class="col-md-4">
+                        <!-- if images is False/None/non-existent, then default to error message -->
+                        <a href="{{mars.hemispheres.0.img_url}}">
+                            <img src="{{mars.hemispheres.0.thumb | default('static/images/error.png', true) }}"
+                                class="img-responsive" alt="Responsive image" />
+                            <p>{{ mars.hemispheres.0.title }}</p>
+                        </a>
+                    </div>
+                    <div class="col-md-4">
+                        <a href="{{mars.hemispheres.1.img_url}}">
+                            <img src="{{mars.hemispheres.1.thumb | default('static/images/error.png', true) }}"
+                                class="img-responsive" alt="Responsive image" />
+                            <p>{{ mars.hemispheres.1.title }}</p>
+                        </a>
+                    </div>
+                </div>
+                <div class="row" id="mars-hemi-images-2">
+                    <div class="col-md-4">
+                        <a href="{{mars.hemispheres.2.img_url}}">
+                            <img src="{{mars.hemispheres.2.thumb | default('static/images/error.png', true) }}"
+                                class="img-responsive" alt="Responsive image" />
+                            <p>{{ mars.hemispheres.2.title }}</p>
+                        </a>
+                    </div>
+                    <div class="col-md-4">
+                        <a href="{{mars.hemispheres.3.img_url}}">
+                            <img src="{{mars.hemispheres.3.thumb | default('static/images/error.png', true) }}"
+                                class="img-responsive" alt="Responsive image" />
+                            <p>{{ mars.hemispheres.3.title }}</p>
+                        </a>
                     </div>
                 </div>
             </div>

@@ -192,15 +192,21 @@ def mars_hemispheres(browser):
     # get the href for splinter find.
     prod_soup = BeautifulSoup(
         browser.html, 'html.parser').find(id='product-section')
-    thumbs_hrefs = []
+
+    # thumbs url
+    thumbs = []
+    for thumb in prod_soup.find_all(class_='thumb'):
+        thumbs.append(thumb.get('src'))
+    # hrefs
+    hrefs = []
     for a in prod_soup.find_all('a', href=True):
-        if a['href'] in thumbs_hrefs:
+        if a['href'] in hrefs:
             continue
-        thumbs_hrefs.append(a['href'])
+        hrefs.append(a['href'])
 
     # get the img_urls, titles.
     img_urls = []
-    for href in thumbs_hrefs:
+    for thumb, href in zip(thumbs, hrefs):
         # Optional delay for loading the page
         browser.visit(usgs_url)
         browser.is_element_present_by_id("product-section", wait_time=10)
@@ -217,7 +223,7 @@ def mars_hemispheres(browser):
         # save it
         if (title and img_url):
             img_urls.append(
-                {'img_url': usgs_base_url + img_url, 'title': title})
+                {'img_url': usgs_base_url + img_url, 'title': title, 'thumb': usgs_base_url + thumb})
 
     n = len(img_urls)
     print(f"get {n} Mars hemispeheres images.")
